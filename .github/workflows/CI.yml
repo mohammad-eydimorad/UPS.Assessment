@@ -19,8 +19,8 @@ jobs:
     runs-on: windows-latest
 
     env:
-      Solution_Path: UPS.Assesment.sln
-      Test_Project_Path: UPS.Assessment.Domain.UnitTests\UPS.Assessment.Domain.UnitTests.csproj
+      Solution_Path: src/UPS.Assesment.sln
+      Test_Project_Path: src/UPS.Assessment.Domain.UnitTests\UPS.Assessment.Domain.UnitTests.csproj
 
 
     steps:
