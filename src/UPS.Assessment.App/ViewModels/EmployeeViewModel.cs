@@ -9,5 +9,7 @@ namespace UPS.Assessment.App.ViewModels
 
         public string Name => _employee.Name;
         public string Email => _employee.Email;
+        public string Gender => _employee.Gender.ToString();
+        public string Status => _employee.Status.ToString();
     }
 }
