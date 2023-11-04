@@ -4,11 +4,11 @@ using UPS.Assessment.App.ViewModels;
 
 namespace UPS.Assessment.App.Services
 {
-    public class NavigationService
+    public class NavigationService<TViewModel> where TViewModel : BaseViewModel
     {
         private readonly NavigationStore _navigationStore;
-        private readonly Func<BaseViewModel> _viewModelFactory;
-        public NavigationService(NavigationStore navigationStore, Func<BaseViewModel> viewModelFactory)
+        private readonly Func<TViewModel> _viewModelFactory;
+        public NavigationService(NavigationStore navigationStore, Func<TViewModel> viewModelFactory)
         {
             _navigationStore = navigationStore;
             _viewModelFactory = viewModelFactory;

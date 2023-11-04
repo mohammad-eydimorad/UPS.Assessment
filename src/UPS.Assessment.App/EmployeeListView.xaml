@@ -7,9 +7,21 @@
              d:DataContext="{d:DesignInstance Type=viewmodels:EmployeeListViewModel}"
              mc:Ignorable="d"
              d:DesignHeight="450"
+             Focusable="True"
              d:DesignWidth="800">
+    <UserControl.InputBindings>
+        <KeyBinding Key="P"
+                    Modifiers="Control"
+                    Command="{Binding ExportEmployeesCommand}" />
+        <KeyBinding Key="N"
+                    Modifiers="Control"
+                    Command="{Binding NewEmployeeCommand}" />
+    </UserControl.InputBindings>
+
     <Grid Background="White">
+ 
         <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
@@ -25,7 +37,44 @@
                     Content="Add Employee"
                     Margin="10 0 0 0" />
         </Grid>
-        <ListView Grid.Row="1"
+        <Border CornerRadius="5"
+                Padding="10 10 10 10"
+                BorderThickness="0"
+                BorderBrush="Black"
+                Grid.Row="1"
+                Margin="0 20 0 0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="auto" />
+                </Grid.ColumnDefinitions>
+                <TextBlock VerticalAlignment="Center"
+                           Margin="0 0 10 0"
+                           Text="Name: " />
+                <TextBox Grid.Column="1"
+                         Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}"
+                         Width="300">
+                    <TextBox.InputBindings>
+                        <KeyBinding Key="Enter"
+                                    Command="{Binding SearchEmployeeCommand}" />
+                    </TextBox.InputBindings>
+                </TextBox>
+                <Button Command="{Binding SearchEmployeeCommand}"
+                        Grid.Column="2"
+                        Width="100"
+                        Content="Search"
+                        Margin="10 0 0 0" />
+                <Button Command="{Binding ExportEmployeesCommand}"
+                        Grid.Column="3"
+                        Content="Export"
+                        Margin="10 0 0 0">
+                </Button>
+            </Grid>
+        </Border>
+        <ListView Grid.Row="2"
+                  BorderThickness="0.3"
                   Margin="0 25 0 0"
                   ItemsSource="{Binding Employees}">
             <ListView.View>
@@ -59,6 +108,26 @@
                             <DataTemplate>
                                 <TextBlock Padding="0 0 20 0"
                                            Text="{Binding Status}"></TextBlock>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Actions">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Content="Remove"
+                                        Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type UserControl},Mode=FindAncestor}, Path=DataContext.DeleteEmployeeCommand}"
+                                        CommandParameter="{Binding Id}"
+                                        Background="Transparent"
+                                        BorderBrush="Transparent">
+                                    <Button.Template>
+                                        <ControlTemplate TargetType="Button">
+                                            <TextBlock Text="{TemplateBinding Content}"
+                                                       Foreground="Red"
+                                                       TextDecorations="Underline"
+                                                       Cursor="Hand" />
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                </Button>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>

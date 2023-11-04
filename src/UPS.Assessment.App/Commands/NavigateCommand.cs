@@ -1,12 +1,13 @@
 ﻿using UPS.Assessment.App.Services;
+using UPS.Assessment.App.ViewModels;
 
 namespace UPS.Assessment.App.Commands
 {
-    public class NavigateCommand : BaseCommand
+    public class NavigateCommand<TViewModel> : BaseCommand where TViewModel : BaseViewModel
     {
-        private readonly NavigationService _navigationService;
+        private readonly NavigationService<TViewModel> _navigationService;
 
-        public NavigateCommand(NavigationService navigationService)
+        public NavigateCommand(NavigationService<TViewModel> navigationService)
         {
             _navigationService = navigationService;
         }

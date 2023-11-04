@@ -1,3 +1,5 @@
+using UPS.Assessment.ApplicationService.DTO;
+
 namespace UPS.Assessment.Domain.UnitTests
 {
     public class EmployeeTests
@@ -9,11 +11,11 @@ namespace UPS.Assessment.Domain.UnitTests
             int id = 1;
             string name = "Name";
             string email = "name@example.com";
-            Gender gender = Gender.Male;
-            Status status = Status.Active;
+            string gender = Gender.male.ToString();
+            string status = Status.active.ToString();
 
             // Act
-            var employee = Employee.Create(id, name, email, gender, status);
+            var employee = EmployeeDto.Create(id, name, email, gender, status);
 
             // Assert
             Assert.NotNull(employee);
@@ -31,12 +33,12 @@ namespace UPS.Assessment.Domain.UnitTests
             int invalidId = -1;
             string name = "Name";
             string email = "name@sample.com";
-            Gender gender = Gender.Male;
-            Status status = Status.Active;
+            string gender = Gender.male.ToString();
+            string status = Status.active.ToString();
 
             // Act and Assert
             var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-                    Employee.Create(invalidId, name, email, gender, status));
+                    EmployeeDto.Create(invalidId, name, email, gender, status));
             Assert.Equal("Id", exception.ParamName);
         }
 
@@ -45,12 +47,12 @@ namespace UPS.Assessment.Domain.UnitTests
         {
             // Arrange
             string email = "name@sample.com";
-            Gender gender = Gender.Male;
-            Status status = Status.Active;
+            string gender = Gender.male.ToString();
+            string status = Status.active.ToString();
 
             // Act and Assert
             var exception = Assert.Throws<ArgumentNullException>(() => 
-                    Employee.Create(null, email, gender, status));
+                    EmployeeDto.Create(null, email, gender, status));
             Assert.Equal("Name", exception.ParamName);
         }
 
@@ -59,12 +61,12 @@ namespace UPS.Assessment.Domain.UnitTests
         {
             // Arrange
             string email = "name@sample.com";
-            Gender gender = Gender.Male;
-            Status status = Status.Active;
+            string gender = Gender.male.ToString();
+            string status = Status.active.ToString();
             string longName = new('A', 51);
 
             // Act and Assert
-            Assert.Throws<ArgumentException>(() => Employee.Create(longName, email, gender, status));
+            Assert.Throws<ArgumentException>(() => EmployeeDto.Create(longName, email, gender, status));
         }
 
         [Theory]
@@ -76,11 +78,11 @@ namespace UPS.Assessment.Domain.UnitTests
         {
             // Arrange
             string name = "name";
-            Gender gender = Gender.Male;
-            Status status = Status.Active;
+            string gender = Gender.male.ToString();
+            string status = Status.active.ToString();
 
             // Act
-            var employee = Employee.Create(name, email, gender, status);
+            var employee = EmployeeDto.Create(name, email, gender, status);
 
             // Assert
             Assert.NotNull(employee);
@@ -94,11 +96,11 @@ namespace UPS.Assessment.Domain.UnitTests
         {
             // Arrange
             string name = "name";
-            Gender gender = Gender.Male;
-            Status status = Status.Active;
+            string gender = Gender.male.ToString();
+            string status = Status.active.ToString();
 
             // Act and Assert
-            Assert.Throws<ArgumentException>(() => Employee.Create(name, invalidEmail, gender, status));
+            Assert.Throws<ArgumentException>(() => EmployeeDto.Create(name, invalidEmail, gender, status));
         }
 
         [Fact]
@@ -106,12 +108,12 @@ namespace UPS.Assessment.Domain.UnitTests
         {
             // Arrange
             string name = "name";
-            Gender gender = Gender.Male;
-            Status status = Status.Active;
+            string gender = Gender.male.ToString();
+            string status = Status.active.ToString();
 
             // Act and Assert
             var exception = Assert.Throws<ArgumentNullException>(() =>
-                    Employee.Create(name, null, gender, status));
+                    EmployeeDto.Create(name, null, gender, status));
             Assert.Equal("Email", exception.ParamName);
         }
 
@@ -120,12 +122,12 @@ namespace UPS.Assessment.Domain.UnitTests
         {
             // Arrange
             string name = "name";
-            Gender gender = Gender.Male;
-            Status status = Status.Active;
+            string gender = Gender.male.ToString();
+            string status = Status.active.ToString();
             string invalidEmail = "invalid_email";
 
             // Act and Assert
-            Assert.Throws<ArgumentException>(() => Employee.Create(name, invalidEmail, gender, status));
+            Assert.Throws<ArgumentException>(() => EmployeeDto.Create(name, invalidEmail, gender, status));
         }
     }
 }

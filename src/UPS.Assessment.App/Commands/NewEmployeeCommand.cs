@@ -2,26 +2,33 @@
 using System.Windows;
 using UPS.Assessment.App.Services;
 using UPS.Assessment.App.ViewModels;
-using UPS.Assessment.Domain;
+using UPS.Assessment.ApplicationService;
+using UPS.Assessment.ApplicationService.DTO;
 
 namespace UPS.Assessment.App.Commands
 {
     public class NewEmployeeCommand : BaseCommand<NewEmployeeViewModel>
     {
-        private readonly NavigationService _employeeListNavigationService;
+        private readonly IEmployeeService _employeeService;
+        private readonly NavigationService<EmployeeListViewModel> _employeeListNavigationService;
+        
 
-        public NewEmployeeCommand(NewEmployeeViewModel newEmployee, NavigationService employeeListNavigationService):
+        public NewEmployeeCommand(
+            NewEmployeeViewModel newEmployee,
+            IEmployeeService employeeService,
+            NavigationService<EmployeeListViewModel> employeeListNavigationService) :
             base(newEmployee)
         {
-            this._employeeListNavigationService = employeeListNavigationService;
+            _employeeService = employeeService;
+            _employeeListNavigationService = employeeListNavigationService;
         }
 
         public override bool CanExecute(object? parameter)
         {
             try
             {
-                 Employee.Create(this.ViewModel.Name, this.ViewModel.Email, Gender.Male, Status.Active);
-                return true;
+                CreateDtoFromViewModel();
+                return !ViewModel.IsSaving;
             }
             catch (Exception)
             {
@@ -29,19 +36,29 @@ namespace UPS.Assessment.App.Commands
             }
         }
 
-        public override void Execute(object? parameter)
+        public async override void Execute(object? parameter)
         {
             try
             {
-                var employee = Employee.Create(this.ViewModel.Name, this.ViewModel.Email, Gender.Male, Status.Active);
+                ViewModel.IsSaving = true;
+                var employee = CreateDtoFromViewModel();
+                await _employeeService.AddAsync(employee);
                 MessageBox.Show("Success! The new employee has been added.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                 _employeeListNavigationService.Navigate();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 MessageBox.Show("Error! Please complete all fields correctly.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+            finally
+            {
+                ViewModel.IsSaving = false;
+            }
+        }
 
+        private EmployeeDto CreateDtoFromViewModel()
+        {
+            return EmployeeDto.Create(this.ViewModel.Name, this.ViewModel.Email, this.ViewModel.Gender.ToLower(), this.ViewModel.Status.ToLower());
         }
     }
 }

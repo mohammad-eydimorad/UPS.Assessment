@@ -3,12 +3,34 @@ using System.Linq;
 using System.Windows.Input;
 using UPS.Assessment.App.Commands;
 using UPS.Assessment.App.Services;
-using UPS.Assessment.Domain;
+using UPS.Assessment.ApplicationService;
 
 namespace UPS.Assessment.App.ViewModels
 {
     public class NewEmployeeViewModel : BaseViewModel
     {
+        public NewEmployeeViewModel(IEmployeeService employeeService, NavigationService<EmployeeListViewModel> employeeListNavigationService)
+        {
+            SaveEmployeeCommand = new NewEmployeeCommand(this, employeeService, employeeListNavigationService);
+            CancelCommand = new NavigateCommand<EmployeeListViewModel>(employeeListNavigationService);
+            _name = "";
+            _email = "";
+            _gender = ApplicationService.DTO.Gender.male.ToString().ToUpperFirstLetter();
+            _status = ApplicationService.DTO.Status.active.ToString().ToUpperFirstLetter();
+
+            _genders = new List<string>
+            {
+                ApplicationService.DTO.Gender.male.ToString().ToUpperFirstLetter(),
+                ApplicationService.DTO.Gender.female.ToString().ToUpperFirstLetter()
+            };
+
+            _statuses = new List<string>
+            {
+              ApplicationService.DTO.Status.active.ToString().ToUpperFirstLetter(),
+              ApplicationService.DTO.Status.inactive.ToString().ToUpperFirstLetter()
+            };
+        }
+
         private string _name;
         public string Name
         {
@@ -56,30 +78,21 @@ namespace UPS.Assessment.App.ViewModels
             }
         }
 
+        private bool _isSaving;
+        public bool IsSaving
+        {
+            get => _isSaving;
+            set
+            {
+                _isSaving = value;
+                OnPropertyChanged(nameof(IsSaving));
+            }
+        }
+
         private readonly IEnumerable<string> _statuses;
         public IReadOnlyList<string> Statuses => _statuses.ToList();
 
-        public ICommand SaveEmployeeCommand {  get; }
-        public ICommand CancelCommand {  get; }
-
-        public NewEmployeeViewModel(NavigationService employeeListNavigationService)
-        {
-            SaveEmployeeCommand = new NewEmployeeCommand(this, employeeListNavigationService);
-            CancelCommand = new NavigateCommand(employeeListNavigationService);
-            _gender = Domain.Gender.Male.ToString();
-            _status = Domain.Status.Active.ToString();
-            
-            _genders = new List<string>
-            {
-                "Male",
-                "Female"
-            };
-
-            _statuses = new List<string>
-            {
-                "Active",
-                "Inactive"
-            };
-        }
+        public ICommand SaveEmployeeCommand { get; }
+        public ICommand CancelCommand { get; }
     }
 }

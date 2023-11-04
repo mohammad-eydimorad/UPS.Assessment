@@ -5,11 +5,11 @@ using UPS.Assessment.App.ViewModels;
 
 namespace UPS.Assessment.App.Commands
 {
-    public abstract class BaseCommand<T> : BaseCommand where T : BaseViewModel
+    public abstract class BaseCommand<TViewModel> : BaseCommand where TViewModel : BaseViewModel
     {
-        public T ViewModel;
+        public TViewModel ViewModel;
 
-        protected BaseCommand(T viewModel)
+        protected BaseCommand(TViewModel viewModel)
         {
             ViewModel = viewModel;
             ViewModel.PropertyChanged += OnPropertyChanged;
