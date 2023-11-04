@@ -1,0 +1,30 @@
+﻿<UserControl x:Class="UPS.Assessment.App.EmployeeForm" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:viewmodels="clr-namespace:UPS.Assessment.App.ViewModels" d:DataContext="{d:DesignInstance Type=viewmodels:NewEmployeeViewModel}" mc:Ignorable="d" d:DesignHeight="450" d:DesignWidth="800">
+    <Grid Background="White" Grid.IsSharedSizeScope="True">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="0" Grid.Column="0" Text="Add new Employee" FontSize="24">
+        </TextBlock>
+        <Grid Grid.Row="1" Margin="0 15 0 0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"></RowDefinition>
+                <RowDefinition Height="auto"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto" SharedSizeGroup="FirstColumn"></ColumnDefinition>
+                <ColumnDefinition Width="auto" SharedSizeGroup="SecondColumn"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Row="0" Width="200" Grid.Column="0" Text="Name" />
+
+            <TextBox Grid.Row="1" Grid.Column="0" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" Margin="0 5 0 0" />
+            <TextBlock Grid.Row="0" Width="200" Grid.Column="1" Margin="15 0 0 0" Text="Email" />
+            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Email, UpdateSourceTrigger=PropertyChanged}" Margin="15 5 0 0" />
+        </Grid>
+        <StackPanel Orientation="Horizontal" Margin="0 50 0 0" Grid.Row="2">
+            <Button Content="Save" Command="{Binding SaveEmployeeCommand}" />
+            <Button Content="Cancel" Margin="10 0 0 0" Command="{Binding CancelCommand}" />
+        </StackPanel>
+    </Grid>
+</UserControl>
