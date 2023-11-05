@@ -1,5 +1,6 @@
 ﻿namespace UPS.Assessment.ACL.GoRest
 {
+    using System.Net.Http;
     using System.Net.Http.Headers;
     using System.Net.Http.Json;
     using System.Text.Json;
@@ -9,16 +10,20 @@
     {
         private readonly HttpClient _httpClient;
 
-        public RestClient(string baseUrl, string token)
+        public RestClient(HttpClient? httpClient, string baseUrl, string token)
         {
-            _httpClient = new HttpClient
-            {
-                BaseAddress = new Uri(baseUrl)
-            };
+            _httpClient = httpClient ?? new HttpClient();
+            _httpClient.BaseAddress = new Uri(baseUrl);
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
         }
 
-        public async Task<(List<T>? Data, Dictionary<string,string>? Headers)> GetListAsync(string? query)
+        public RestClient(string baseUrl, string token): this(null, baseUrl, token)
+        {
+ 
+        }
+
+
+        public async Task<(List<T> Data, Dictionary<string, string> Headers)> GetListAsync(string? query)
         {
             HttpResponseMessage response = await _httpClient.GetAsync($"/public/v2/users{query}");
             response.EnsureSuccessStatusCode();
@@ -26,7 +31,10 @@
             {
                 PropertyNameCaseInsensitive = true
             });
-
+            if (data == null)
+            {
+                return (new List<T>(), new Dictionary<string, string>());
+            }
             return (data, response.Headers.ToDictionary(h => h.Key, h => string.Join(",", h.Value)));
         }
 

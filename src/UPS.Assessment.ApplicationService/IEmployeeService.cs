@@ -5,7 +5,7 @@ namespace UPS.Assessment.ApplicationService
     public interface IEmployeeService
     {
         Task AddAsync(EmployeeDto employee);
-        Task<EmployeeListDto> GetAllAsync(string query);
+        Task<EmployeeListDto> GetAllAsync(string name, int? page);
         Task DeleteAsync(int id);
     }
 }

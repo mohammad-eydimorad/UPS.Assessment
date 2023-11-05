@@ -16,13 +16,18 @@ using System.Windows.Shapes;
 namespace UPS.Assessment.App
 {
     /// <summary>
-    /// Interaction logic for Header.xaml
+    /// Interaction logic for EmployeeListView.xaml
     /// </summary>
-    public partial class Header : UserControl
+    public partial class EmployeeListView : UserControl
     {
-        public Header()
+        public EmployeeListView()
         {
             InitializeComponent();
+        }
+
+        private void EmployeeListView_Loaded(object sender, RoutedEventArgs e)
+        {
+            SearchQueryInput.Focus();
         }
     }
 }

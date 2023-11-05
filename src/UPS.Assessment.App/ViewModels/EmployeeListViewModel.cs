@@ -1,9 +1,6 @@
-﻿using Microsoft.Win32;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using UPS.Assessment.App.Commands;
@@ -14,96 +11,50 @@ namespace UPS.Assessment.App.ViewModels
 {
     public class EmployeeListViewModel : BaseViewModel
     {
-        public EmployeeListViewModel(IEmployeeService employeeservice, NavigationService<NewEmployeeViewModel> newEmployeeNavigationService)
+        private readonly IEmployeeService _employeeService;
+        public EmployeeListViewModel(
+            IEmployeeService employeeservice,
+            NavigationService<NewEmployeeViewModel> newEmployeeNavigationService
+            )
         {
-            this._employees = new ObservableCollection<EmployeeViewModel>();
-            NewEmployeeCommand = new NavigateCommand<NewEmployeeViewModel>(newEmployeeNavigationService);
-            SearchEmployeeCommand = new RelayCommand((_) => LoadEmployees());
-            DeleteEmployeeCommand = new RelayCommand((id) => DeleteEmployee((int?)id));
-            ExportEmployeesCommand = new RelayCommand((_) => ExportEmployees());
             _employeeService = employeeservice;
-            _searchQuery = "";
+            NavigateToNewEmployeeCommand = new NavigateCommand<NewEmployeeViewModel>(newEmployeeNavigationService);
+            SearchEmployeeCommand = new SearchEmployeesCommand(this);
+            DeleteEmployeeCommand = new DeleteEmployeesCommand(employeeservice, this);
+            ExportEmployeesCommand = new ExportEmployeesCommand(this);
+            NextPageCommand = new GoToNextPageCommand(this);
+            PrevPageCommand = new GoToPrevPageCommand(this);
             LoadEmployees();
         }
-
-        private async void LoadEmployees()
-        {
-            var employeePaginatedList = await _employeeService.GetAllAsync(_searchQuery);
-            if (employeePaginatedList != null)
-            {
-                _employees.Clear();
-                foreach (var employee in employeePaginatedList.Employees)
-                {
-                    _employees.Add(new EmployeeViewModel(employee));
-                }
-            }
-        }
-        private async void DeleteEmployee(int? id)
-        {
-            if (id == null)
-            {
-                return;
-            }
-
-            MessageBoxResult result = MessageBox.Show("Are you sure you want to delete this employee?", "Confirm Deletion", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-
-            if (result == MessageBoxResult.Yes)
-            {
-                await _employeeService.DeleteAsync(id.Value);
-                LoadEmployees();
-            }
-        }
-
-        private void ExportEmployees()
-        {
-            try
-            {
-                string filePath = GetSaveFilePath();
-
-                if (!string.IsNullOrEmpty(filePath))
-                {
-                    CsvExporter.ExportToCsv(_employees, filePath);
-                    MessageBox.Show("CSV export was successful. The data has been saved to the selected file.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                }
-            }
-            catch (Exception)
-            {
-                MessageBox.Show("CSV export encountered an error. Please try again or check the selected file path.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
-
-        private string GetSaveFilePath()
-        {
-            var saveFileDialog = new SaveFileDialog
-            {
-                Filter = "CSV files (*.csv)|*.csv",
-                Title = "Export to CSV",
-            };
-
-            if (saveFileDialog.ShowDialog() == true)
-            {
-                return saveFileDialog.FileName;
-            }
-
-            return null;
-        }
-
-        public static EmployeeListViewModel LoadViewModel(IEmployeeService employeeservice, NavigationService<NewEmployeeViewModel> newEmployeeNavigationService)
-        {
-            EmployeeListViewModel viewModel = new EmployeeListViewModel(employeeservice, newEmployeeNavigationService);
-            return viewModel;
-        }
-
-        public ICommand NewEmployeeCommand { get; }
+        public ICommand NavigateToNewEmployeeCommand { get; }
         public ICommand SearchEmployeeCommand { get; }
         public ICommand DeleteEmployeeCommand { get; }
         public ICommand ExportEmployeesCommand { get; }
-        private readonly ObservableCollection<EmployeeViewModel> _employees;
-        private readonly IEmployeeService _employeeService;
+        public ICommand NextPageCommand { get; }
+        public ICommand PrevPageCommand { get; }
 
         public IEnumerable<EmployeeViewModel> Employees => _employees;
-
-        private string _searchQuery;
+        public PaginationViewModel? Pagination
+        {
+            get => _pagination; set
+            {
+                _pagination = value;
+                if (value != null)
+                {
+                    PaginationDescription = $"Page {value.CurrentPage} of {value.TotalPages} pages";
+                }
+                OnPropertyChanged(nameof(Pagination));
+            }
+        }
+        public string? PaginationDescription
+        {
+            get => _paginationDescription;
+            set
+            {
+                _paginationDescription = value;
+                OnPropertyChanged(nameof(PaginationDescription));
+            }
+        }
         public string SearchQuery
         {
             get => _searchQuery;
@@ -113,5 +64,62 @@ namespace UPS.Assessment.App.ViewModels
                 OnPropertyChanged(nameof(SearchQuery));
             }
         }
+        public bool IsLoading
+        {
+            get => _isLoading;
+            set
+            {
+                _isLoading = value;
+                OnPropertyChanged(nameof(IsLoading));
+            }
+        }
+
+        public async void LoadEmployees()
+        {
+            try
+            {
+                IsLoading = true;
+                var employeePaginatedList = await _employeeService.GetAllAsync(_searchQuery, Pagination?.CurrentPage);
+                if (employeePaginatedList == null)
+                {
+                    DisplayLoadingErrorMessage();
+                    return;
+                }
+                _employees.Clear();
+                foreach (var employee in employeePaginatedList.Employees)
+                {
+                    _employees.Add(new EmployeeViewModel(employee));
+                }
+                Pagination = new PaginationViewModel(employeePaginatedList.PaginationData);
+            }
+            catch (Exception)
+            {
+                DisplayLoadingErrorMessage();
+            }
+            finally
+            {
+                IsLoading = false;
+            }
+        }
+
+        public static EmployeeListViewModel LoadViewModel(IEmployeeService employeeservice, 
+            NavigationService<NewEmployeeViewModel> newEmployeeNavigationService)
+        {
+            EmployeeListViewModel viewModel = new(employeeservice, newEmployeeNavigationService);
+            return viewModel;
+        }
+
+        private static void DisplayLoadingErrorMessage()
+        {
+            MessageBox.Show("An error occurred while loading employees." +
+                   "\n Please check your connection and try again.", "Error",
+                   MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+
+        private readonly ObservableCollection<EmployeeViewModel> _employees = new();
+        private string _searchQuery = "";
+        private PaginationViewModel? _pagination = null;
+        private string? _paginationDescription;
+        private bool _isLoading = true;
     }
 }

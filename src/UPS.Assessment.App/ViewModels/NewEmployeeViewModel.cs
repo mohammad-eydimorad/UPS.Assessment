@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Windows.Input;
 using UPS.Assessment.App.Commands;
 using UPS.Assessment.App.Services;
@@ -13,25 +12,10 @@ namespace UPS.Assessment.App.ViewModels
         {
             SaveEmployeeCommand = new NewEmployeeCommand(this, employeeService, employeeListNavigationService);
             CancelCommand = new NavigateCommand<EmployeeListViewModel>(employeeListNavigationService);
-            _name = "";
-            _email = "";
-            _gender = ApplicationService.DTO.Gender.male.ToString().ToUpperFirstLetter();
-            _status = ApplicationService.DTO.Status.active.ToString().ToUpperFirstLetter();
-
-            _genders = new List<string>
-            {
-                ApplicationService.DTO.Gender.male.ToString().ToUpperFirstLetter(),
-                ApplicationService.DTO.Gender.female.ToString().ToUpperFirstLetter()
-            };
-
-            _statuses = new List<string>
-            {
-              ApplicationService.DTO.Status.active.ToString().ToUpperFirstLetter(),
-              ApplicationService.DTO.Status.inactive.ToString().ToUpperFirstLetter()
-            };
         }
 
-        private string _name;
+        public ICommand SaveEmployeeCommand { get; }
+        public ICommand CancelCommand { get; }
         public string Name
         {
             get => _name;
@@ -41,8 +25,6 @@ namespace UPS.Assessment.App.ViewModels
                 OnPropertyChanged(nameof(Name));
             }
         }
-
-        private string _email;
         public string Email
         {
             get => _email;
@@ -52,8 +34,6 @@ namespace UPS.Assessment.App.ViewModels
                 OnPropertyChanged(nameof(Email));
             }
         }
-
-        private string _gender;
         public string Gender
         {
             get => _gender;
@@ -63,11 +43,6 @@ namespace UPS.Assessment.App.ViewModels
                 OnPropertyChanged(nameof(Gender));
             }
         }
-
-        private readonly IEnumerable<string> _genders;
-        public IReadOnlyList<string> Genders => _genders.ToList();
-
-        private string _status;
         public string Status
         {
             get => _status;
@@ -77,8 +52,6 @@ namespace UPS.Assessment.App.ViewModels
                 OnPropertyChanged(nameof(Status));
             }
         }
-
-        private bool _isSaving;
         public bool IsSaving
         {
             get => _isSaving;
@@ -88,11 +61,21 @@ namespace UPS.Assessment.App.ViewModels
                 OnPropertyChanged(nameof(IsSaving));
             }
         }
+        public IReadOnlyList<string> Genders => new List<string>
+            {
+                ApplicationService.DTO.Gender.male.ToString().ToUpperFirstLetter(),
+                ApplicationService.DTO.Gender.female.ToString().ToUpperFirstLetter()
+            };
+        public IReadOnlyList<string> Statuses => new List<string>
+            {
+              ApplicationService.DTO.Status.active.ToString().ToUpperFirstLetter(),
+              ApplicationService.DTO.Status.inactive.ToString().ToUpperFirstLetter()
+            };
 
-        private readonly IEnumerable<string> _statuses;
-        public IReadOnlyList<string> Statuses => _statuses.ToList();
-
-        public ICommand SaveEmployeeCommand { get; }
-        public ICommand CancelCommand { get; }
+        private string _name = "";
+        private string _email = "";
+        private string _gender = ApplicationService.DTO.Gender.male.ToString().ToUpperFirstLetter();
+        private string _status = ApplicationService.DTO.Status.active.ToString().ToUpperFirstLetter();
+        private bool _isSaving;
     }
 }

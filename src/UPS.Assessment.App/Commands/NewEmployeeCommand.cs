@@ -46,7 +46,7 @@ namespace UPS.Assessment.App.Commands
                 MessageBox.Show("Success! The new employee has been added.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                 _employeeListNavigationService.Navigate();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 MessageBox.Show("Error! Please complete all fields correctly.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
@@ -58,7 +58,7 @@ namespace UPS.Assessment.App.Commands
 
         private EmployeeDto CreateDtoFromViewModel()
         {
-            return EmployeeDto.Create(this.ViewModel.Name, this.ViewModel.Email, this.ViewModel.Gender.ToLower(), this.ViewModel.Status.ToLower());
+            return new EmployeeDto(this.ViewModel.Name, this.ViewModel.Email, this.ViewModel.Gender.ToLower(), this.ViewModel.Status.ToLower());
         }
     }
 }

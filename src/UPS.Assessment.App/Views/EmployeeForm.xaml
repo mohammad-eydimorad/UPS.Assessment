@@ -7,10 +7,13 @@
              d:DataContext="{d:DesignInstance Type=viewmodels:NewEmployeeViewModel}"
              mc:Ignorable="d"
              d:DesignHeight="450"
-             d:DesignWidth="800">
+             d:DesignWidth="800"
+             Loaded="EmpoloyeeForm_Loaded">
     <UserControl.InputBindings>
         <KeyBinding Key="Esc"
                     Command="{Binding CancelCommand}" />
+        <KeyBinding Key="Return"
+                    Command="{Binding SaveEmployeeCommand}" />
     </UserControl.InputBindings>
     <Grid Background="White"
           Grid.IsSharedSizeScope="True">
@@ -44,6 +47,7 @@
                        Grid.Column="0"
                        Text="Name" />
             <TextBox Grid.Row="1"
+                     x:Name="NameInput"
                      Grid.Column="0"
                      Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"
                      Margin="0 5 0 0">

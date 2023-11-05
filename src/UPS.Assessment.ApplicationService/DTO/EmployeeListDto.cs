@@ -2,15 +2,7 @@
 {
     public class EmployeeListDto
     {
-        public List<EmployeeDto> Employees { get; set; }
-        public PaginationDataDto PaginationData { get; set; }
-    }
-
-    public class PaginationDataDto
-    {
-        public int CurrentPage { get; set;}
-        public int Limit { get; set;}
-        public int TotalPages { get; set;}
-        public int TotalCount { get; set;}
+        public List<EmployeeDto> Employees { get; set; } = new List<EmployeeDto>();
+        public PaginationDto PaginationData { get; set; } = new PaginationDto(1, 10, 1, 1);
     }
 }

@@ -8,6 +8,8 @@ using UPS.Assessment.ACL.GoRest;
 using UPS.Assessment.ApplicationService.DTO;
 using UPS.Assessment.ApplicationService;
 using Microsoft.Extensions.Configuration;
+using System.Configuration;
+using System;
 
 namespace UPS.Assessment.App
 {
@@ -21,9 +23,19 @@ namespace UPS.Assessment.App
                 .AddViewModels()
                 .ConfigureServices((hostContext, services) =>
                 {
+                    var employeeHostBaseUrl = hostContext.Configuration.GetValue<string>("EmployeeHostBaseURl");
+                    var employeeHostToken = hostContext.Configuration.GetValue<string>("EmployeeHostToken");
+                    if(employeeHostBaseUrl == null)
+                    {
+                        throw new ArgumentNullException("employeeHostBaseUrl");
+                    }
+                    if (employeeHostToken == null)
+                    {
+                        throw new ArgumentNullException("EmployeeHostToken");
+                    }
                     var restClient = new RestClient<EmployeeDto>(
-                        hostContext.Configuration.GetValue<string>("EmployeeHostBaseURl"),
-                        hostContext.Configuration.GetValue<string>("EmployeeHostToken")
+                        employeeHostBaseUrl,
+                        employeeHostToken
                         );
                     services.AddSingleton<IRestClient<EmployeeDto>>(restClient);
                     services.AddSingleton<IEmployeeService, EmployeeService>();
