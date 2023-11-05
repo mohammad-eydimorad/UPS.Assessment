@@ -5,10 +5,37 @@
     <TargetFramework>net6.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
+    <ApplicationIcon>Assets\ups-logo.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\UPS.Assessment.Domain\UPS.Assessment.Domain.csproj" />
+    <None Remove="Assets\export-icon.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Assets\ups-logo.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\UPS.Assessment.ACL.GoRest\UPS.Assessment.ACL.GoRest.csproj" />
+    <ProjectReference Include="..\UPS.Assessment.ApplicationService\UPS.Assessment.ApplicationService.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\export-icon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

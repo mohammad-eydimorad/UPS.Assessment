@@ -1,27 +1,27 @@
 ﻿using Libs.Utils;
-using System;
 
-namespace UPS.Assessment.Domain
+namespace UPS.Assessment.ApplicationService.DTO
 {
-    public class Employee
+    public class EmployeeDto
     {
-        public int Id { get; private set; }
-        public string Name { get; private set; }
-        public string Email { get; private set; }
-        public Gender Gender { get; private set; }
-        public Status Status { get; private set; }
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string Email { get; set; }
+        public string Gender { get; set; }
+        public string Status { get; set; }
 
-        public static Employee Create(int id, string name, string email, Gender gender, Status status)
+
+        public static EmployeeDto Create(int id, string name, string email, string gender, string status)
         {
             var employee = Create(name, email, gender, status);
             employee.SetId(id);
             return employee;
         }
 
-        public static Employee Create(string name, string email, Gender gender, Status status)
+        public static EmployeeDto Create(string name, string email, string gender, string status)
         {
-            var employee = new Employee()
-            {                
+            var employee = new EmployeeDto()
+            {
                 Gender = gender,
                 Status = status
             };
@@ -51,7 +51,7 @@ namespace UPS.Assessment.Domain
             {
                 throw new ArgumentException($"{nameof(Name)} is too long. Maximum length is 50 characters.");
             }
-            Name = name;
+            this.Name = name;
         }
 
         private void SetEmail(string email)
@@ -61,12 +61,12 @@ namespace UPS.Assessment.Domain
                 throw new ArgumentNullException("Email");
             }
 
-            if(!EmailValidator.IsValidEmail(email))
+            if (!EmailValidator.IsValidEmail(email))
             {
                 throw new ArgumentException("Email is not valid.");
             }
 
-            Email = email;
+            this.Email = email;
         }
     }
 }

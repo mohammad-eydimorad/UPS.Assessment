@@ -1,48 +1,60 @@
 ﻿using System.Windows;
 using UPS.Assessment.App.Services;
-using UPS.Assessment.App.Store;
 using UPS.Assessment.App.ViewModels;
+using Microsoft.Extensions.Hosting;
+using UPS.Assessment.App.Store;
+using Microsoft.Extensions.DependencyInjection;
+using UPS.Assessment.ACL.GoRest;
+using UPS.Assessment.ApplicationService.DTO;
+using UPS.Assessment.ApplicationService;
+using Microsoft.Extensions.Configuration;
 
 namespace UPS.Assessment.App
 {
-    /// <summary>
-    /// Interaction logic for App.xaml
-    /// </summary>
     public partial class App : Application
     {
-        private readonly NavigationStore _navigationStore;
-        //private readonly NavigationService _navigationService;
+        private readonly IHost _host;
 
         public App()
         {
-            _navigationStore = new NavigationStore();
-            
+            _host = Host.CreateDefaultBuilder()
+                .AddViewModels()
+                .ConfigureServices((hostContext, services) =>
+                {
+                    var restClient = new RestClient<EmployeeDto>(
+                        hostContext.Configuration.GetValue<string>("EmployeeHostBaseURl"),
+                        hostContext.Configuration.GetValue<string>("EmployeeHostToken")
+                        );
+                    services.AddSingleton<IRestClient<EmployeeDto>>(restClient);
+                    services.AddSingleton<IEmployeeService, EmployeeService>();
+                    services.AddSingleton<NavigationStore>();
+
+                    services.AddSingleton(s => new MainWindow()
+                    {
+                        DataContext = s.GetRequiredService<MainViewModel>()
+                    });
+                })
+                .Build();
         }
 
         protected override void OnStartup(StartupEventArgs e)
         {
-            var employeeListViewModel = EmployeeListViewModelFactory();
-            _navigationStore.CurrentViewModel = employeeListViewModel;
+            _host.Start();
 
-            MainWindow = new MainWindow
-            {
-                DataContext = new MainViewModel(_navigationStore)
-            };
+            NavigationService<EmployeeListViewModel> navigationService = _host.Services.GetRequiredService<NavigationService<EmployeeListViewModel>>();
+            navigationService.Navigate();
+
+            MainWindow = _host.Services.GetRequiredService<MainWindow>();
             MainWindow.Show();
+
             base.OnStartup(e);
         }
 
-        private EmployeeListViewModel EmployeeListViewModelFactory()
+        protected override void OnExit(ExitEventArgs e)
         {
-            var _navigationService = new NavigationService(_navigationStore, NewEmployeeViewModelFactory);
-            return new EmployeeListViewModel(_navigationService);
+            _host.Dispose();
 
+            base.OnExit(e);
         }
-
-        private NewEmployeeViewModel NewEmployeeViewModelFactory()
-        {
-            return new NewEmployeeViewModel(new NavigationService(_navigationStore, EmployeeListViewModelFactory));
-        }
-
     }
 }

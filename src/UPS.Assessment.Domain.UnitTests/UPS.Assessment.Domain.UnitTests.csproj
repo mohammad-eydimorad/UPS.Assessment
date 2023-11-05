@@ -23,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\UPS.Assessment.Domain\UPS.Assessment.Domain.csproj" />
+    <ProjectReference Include="..\UPS.Assessment.ApplicationService\UPS.Assessment.ApplicationService.csproj" />
   </ItemGroup>
 
 </Project>
