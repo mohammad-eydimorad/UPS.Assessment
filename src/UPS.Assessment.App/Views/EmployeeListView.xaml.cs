@@ -24,5 +24,10 @@ namespace UPS.Assessment.App
         {
             InitializeComponent();
         }
+
+        private void EmployeeListView_Loaded(object sender, RoutedEventArgs e)
+        {
+            SearchQueryInput.Focus();
+        }
     }
 }

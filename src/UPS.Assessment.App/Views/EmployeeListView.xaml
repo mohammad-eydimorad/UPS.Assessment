@@ -3,11 +3,14 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:custom="clr-namespace:LoadingSpinnerControl;assembly=LoadingSpinnerControl"
              xmlns:viewmodels="clr-namespace:UPS.Assessment.App.ViewModels"
+             xmlns:converters="clr-namespace:UPS.Assessment.App.Converters"
              d:DataContext="{d:DesignInstance Type=viewmodels:EmployeeListViewModel}"
              mc:Ignorable="d"
              d:DesignHeight="450"
              Focusable="True"
+             Loaded="EmployeeListView_Loaded"
              d:DesignWidth="800">
     <UserControl.InputBindings>
         <KeyBinding Key="P"
@@ -17,6 +20,10 @@
                     Modifiers="Control"
                     Command="{Binding NavigateToNewEmployeeCommand}" />
     </UserControl.InputBindings>
+    <UserControl.Resources>
+        <converters:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" />
+        <converters:StringToVisibilityConverter x:Key="StringToVisibilityConverter" />
+    </UserControl.Resources>
 
     <Grid Background="White">
 
@@ -39,6 +46,7 @@
                     Content="Add Employee"
                     Margin="10 0 0 0" />
         </Grid>
+       
         <Grid  Grid.Row="1"
                Margin="0 20 0 0">
             <Grid.ColumnDefinitions>
@@ -52,6 +60,7 @@
                        Text="Name: " />
             <TextBox Grid.Column="1"
                      Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}"
+                     x:Name="SearchQueryInput"
                      Width="300">
                 <TextBox.InputBindings>
                     <KeyBinding Key="Enter"
@@ -69,13 +78,19 @@
                     Margin="10 0 0 0">
             </Button>
         </Grid>
+        <custom:LoadingSpinner Diameter="100"
+                               Grid.Row="2"
+                               IsLoading="{Binding IsLoading}"
+                               Thickness="5"
+                               Color="Black" />
         <ListView Grid.Row="2"
                   BorderThickness="0.3"
+                  Background="Transparent"
                   Margin="0 25 0 0"
                   ItemsSource="{Binding Employees}">
             <ListView.View>
                 <GridView>
-                    <GridViewColumn Header="Name">
+                    <GridViewColumn Header="Name" Width="200">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBlock Padding="0 0 20 0"
@@ -83,7 +98,7 @@
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="Email">
+                    <GridViewColumn Header="Email" Width="300">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBlock Padding="0 0 20 0"
@@ -91,7 +106,7 @@
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="Gender">
+                    <GridViewColumn Header="Gender" Width="70">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBlock Padding="0 0 20 0"
@@ -99,7 +114,7 @@
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="Status">
+                    <GridViewColumn Header="Status" Width="70">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBlock Padding="0 0 20 0"
@@ -107,7 +122,7 @@
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="Actions">
+                    <GridViewColumn Header="Actions" Width="70">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <Button Content="Remove"
@@ -133,6 +148,7 @@
         </ListView>
         <StackPanel Grid.Row="3"
                     Orientation="Horizontal"
+                    Visibility="{Binding PaginationDescription, Converter={StaticResource StringToVisibilityConverter}}"
                     HorizontalAlignment="Center">
             <Button Command="{Binding PrevPageCommand}"
                     Content="&lt;"
