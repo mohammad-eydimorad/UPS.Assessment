@@ -5,8 +5,8 @@ namespace UPS.Assessment.App.Store
 {
     public class NavigationStore
     {
-        private BaseViewModel _currentViewModel;
-        public BaseViewModel CurrentViewModel
+        private BaseViewModel? _currentViewModel;
+        public BaseViewModel? CurrentViewModel
         {
             get => _currentViewModel;
             set
@@ -15,6 +15,6 @@ namespace UPS.Assessment.App.Store
                 CurrentViewModelChanged?.Invoke();
             }
         }
-        public event Action CurrentViewModelChanged;
+        public event Action? CurrentViewModelChanged;
     }
 }

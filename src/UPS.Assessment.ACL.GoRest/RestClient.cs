@@ -18,7 +18,7 @@
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
         }
 
-        public async Task<(List<T>? Data, Dictionary<string,string>? Headers)> GetListAsync(string? query)
+        public async Task<(List<T> Data, Dictionary<string, string> Headers)> GetListAsync(string? query)
         {
             HttpResponseMessage response = await _httpClient.GetAsync($"/public/v2/users{query}");
             response.EnsureSuccessStatusCode();
@@ -26,7 +26,10 @@
             {
                 PropertyNameCaseInsensitive = true
             });
-
+            if (data == null)
+            {
+                return (new List<T>(), new Dictionary<string, string>());
+            }
             return (data, response.Headers.ToDictionary(h => h.Key, h => string.Join(",", h.Value)));
         }
 

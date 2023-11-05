@@ -1,5 +1,4 @@
-﻿using System.Windows.Input;
-using UPS.Assessment.App.Store;
+﻿using UPS.Assessment.App.Store;
 
 namespace UPS.Assessment.App.ViewModels
 {
@@ -17,6 +16,6 @@ namespace UPS.Assessment.App.ViewModels
         }
 
         private readonly NavigationStore _navigationStore;
-        public BaseViewModel CurrentViewModel  => _navigationStore.CurrentViewModel;
+        public BaseViewModel? CurrentViewModel  => _navigationStore.CurrentViewModel;
     }
 }

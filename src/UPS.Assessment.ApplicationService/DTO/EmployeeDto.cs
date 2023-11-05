@@ -4,69 +4,76 @@ namespace UPS.Assessment.ApplicationService.DTO
 {
     public class EmployeeDto
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string Email { get; set; }
-        public string Gender { get; set; }
-        public string Status { get; set; }
+        private string _name = "";
+        private int _id;
+        private string email = "";
 
-
-        public static EmployeeDto Create(int id, string name, string email, string gender, string status)
+        public int Id
         {
-            var employee = Create(name, email, gender, status);
-            employee.SetId(id);
-            return employee;
-        }
-
-        public static EmployeeDto Create(string name, string email, string gender, string status)
-        {
-            var employee = new EmployeeDto()
+            get => _id;
+            set
             {
-                Gender = gender,
-                Status = status
-            };
-            employee.SetName(name);
-            employee.SetEmail(email);
-            return employee;
-        }
+                if (value <= 0)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(Id));
+                }
 
-        private void SetId(int id)
-        {
-            if (id <= 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(Id));
+                _id = value;
             }
+        }
+        public string Name
+        {
+            get => _name;
+            set
+            {
+                if (string.IsNullOrWhiteSpace(value))
+                {
+                    throw new ArgumentNullException(nameof(Name));
+                }
 
+                if (value.Length > 50)
+                {
+                    throw new ArgumentException($"{nameof(Name)} is too long. Maximum length is 50 characters.");
+                }
+                _name = value;
+            }
+        }
+
+        public string Email
+        {
+            get => email;
+            set
+            {
+                if (string.IsNullOrWhiteSpace(value))
+                {
+                    throw new ArgumentNullException(nameof(Email));
+                }
+
+                if (!EmailValidator.IsValidEmail(value))
+                {
+                    throw new ArgumentException("Email is not valid.");
+                }
+
+                email = value;
+            }
+        }
+        public string Gender { get; set; } = "";
+        public string Status { get; set; } = "";
+
+        public EmployeeDto() { }
+
+        public EmployeeDto(int id, string name, string email, string gender, string status)
+            : this(name, email, gender, status)
+        {
             Id = id;
         }
 
-        private void SetName(string name)
+        public EmployeeDto(string name, string email, string gender, string status)
         {
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                throw new ArgumentNullException(nameof(Name));
-            }
-
-            if (name.Length > 50)
-            {
-                throw new ArgumentException($"{nameof(Name)} is too long. Maximum length is 50 characters.");
-            }
-            this.Name = name;
-        }
-
-        private void SetEmail(string email)
-        {
-            if (string.IsNullOrWhiteSpace(email))
-            {
-                throw new ArgumentNullException("Email");
-            }
-
-            if (!EmailValidator.IsValidEmail(email))
-            {
-                throw new ArgumentException("Email is not valid.");
-            }
-
-            this.Email = email;
+            Gender = gender;
+            Status = status;
+            Name = name;
+            Email = email;
         }
     }
 }

@@ -14,31 +14,38 @@ namespace UPS.Assessment.ACL.GoRest
 
         public async Task AddAsync(EmployeeDto employee)
         {
-           await _restclient.PostAsync(employee);
+            await _restclient.PostAsync(employee);
         }
 
-        public async Task<EmployeeListDto> GetAllAsync(string query)
+        public async Task<EmployeeListDto> GetAllAsync(string name, int? page)
         {
-            var content = await _restclient.GetListAsync(!String.IsNullOrWhiteSpace(query) ? $"?name={query}" : "");
-           var employeeListDto = new EmployeeListDto();
-            employeeListDto.Employees = content.Data;
-            if(content.Headers != null)
+            var (Data, Headers) = await _restclient.GetListAsync(MakeQueryString(page ?? 1, name));
+            var employeeListDto = new EmployeeListDto
             {
-                employeeListDto.PaginationData = new PaginationDataDto
-                {
-                    CurrentPage = int.Parse(content.Headers["x-pagination-page"]),
-                    Limit = int.Parse(content.Headers["x-pagination-limit"]),
-                    TotalPages = int.Parse(content.Headers["x-pagination-pages"]),
-                    TotalCount = int.Parse(content.Headers["x-pagination-total"]),
-                };
+                Employees = Data
+            };
+            if (Headers != null)
+            {
+                employeeListDto.PaginationData = new PaginationDto(int.Parse(Headers["x-pagination-page"]), int.Parse(Headers["x-pagination-limit"]), int.Parse(Headers["x-pagination-pages"]), int.Parse(Headers["x-pagination-total"]));
             }
-          
+
             return employeeListDto;
         }
 
         public async Task DeleteAsync(int id)
         {
             await _restclient.DeleteAsync(id);
+        }
+
+        private string MakeQueryString(int page, string name)
+        {
+            string queryString = $"?page={page}";
+            if (!string.IsNullOrEmpty(name))
+            {
+                queryString += $"&name={name}";
+            }
+
+            return queryString;
         }
     }
 }

@@ -22,7 +22,6 @@
                 <local:EmployeeListView></local:EmployeeListView>
             </DataTemplate>
         </Grid.Resources>
-        <local:Header></local:Header>
         <ContentControl Content="{Binding CurrentViewModel}"></ContentControl>
     </Grid>
 </Window>
