@@ -42,4 +42,4 @@ jobs:
 
     # Test
     - name: Execute Unit Tests
-      run: dotnet test
+      run: dotnet test $env:Solution_Path
