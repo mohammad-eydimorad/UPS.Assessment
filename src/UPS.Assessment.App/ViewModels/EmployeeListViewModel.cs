@@ -28,11 +28,11 @@ namespace UPS.Assessment.App.ViewModels
 
         private async void LoadEmployees()
         {
-            var employees = await _employeeService.GetAllAsync(_searchQuery);
-            if (employees != null)
+            var employeePaginatedList = await _employeeService.GetAllAsync(_searchQuery);
+            if (employeePaginatedList != null)
             {
                 _employees.Clear();
-                foreach (var employee in employees)
+                foreach (var employee in employeePaginatedList.Employees)
                 {
                     _employees.Add(new EmployeeViewModel(employee));
                 }
