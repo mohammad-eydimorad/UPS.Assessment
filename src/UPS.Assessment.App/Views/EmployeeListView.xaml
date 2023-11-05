@@ -15,7 +15,7 @@
                     Command="{Binding ExportEmployeesCommand}" />
         <KeyBinding Key="N"
                     Modifiers="Control"
-                    Command="{Binding NewEmployeeCommand}" />
+                    Command="{Binding NavigateToNewEmployeeCommand}" />
     </UserControl.InputBindings>
 
     <Grid Background="White">
@@ -34,7 +34,7 @@
             </Grid.ColumnDefinitions>
             <TextBlock Text="Employee List"
                        FontSize="24" />
-            <Button Command="{Binding NewEmployeeCommand}"
+            <Button Command="{Binding NavigateToNewEmployeeCommand}"
                     Grid.Column="1"
                     Content="Add Employee"
                     Margin="10 0 0 0" />
@@ -111,7 +111,8 @@
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <Button Content="Remove"
-                                        Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type UserControl},Mode=FindAncestor}, Path=DataContext.DeleteEmployeeCommand}"
+                                        Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type UserControl},Mode=FindAncestor}, 
+                                            Path=DataContext.DeleteEmployeeCommand}"
                                         CommandParameter="{Binding Id}"
                                         Background="Transparent"
                                         BorderBrush="Transparent">

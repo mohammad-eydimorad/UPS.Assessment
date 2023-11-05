@@ -18,7 +18,7 @@ namespace UPS.Assessment.App.ViewModels
             )
         {
             _employeeService = employeeservice;
-            NewEmployeeCommand = new NavigateCommand<NewEmployeeViewModel>(newEmployeeNavigationService);
+            NavigateToNewEmployeeCommand = new NavigateCommand<NewEmployeeViewModel>(newEmployeeNavigationService);
             SearchEmployeeCommand = new SearchEmployeesCommand(this);
             DeleteEmployeeCommand = new DeleteEmployeesCommand(employeeservice, this);
             ExportEmployeesCommand = new ExportEmployeesCommand(this);
@@ -26,7 +26,7 @@ namespace UPS.Assessment.App.ViewModels
             PrevPageCommand = new GoToPrevPageCommand(this);
             LoadEmployees();
         }
-        public ICommand NewEmployeeCommand { get; }
+        public ICommand NavigateToNewEmployeeCommand { get; }
         public ICommand SearchEmployeeCommand { get; }
         public ICommand DeleteEmployeeCommand { get; }
         public ICommand ExportEmployeesCommand { get; }
@@ -102,7 +102,8 @@ namespace UPS.Assessment.App.ViewModels
             }
         }
 
-        public static EmployeeListViewModel LoadViewModel(IEmployeeService employeeservice, NavigationService<NewEmployeeViewModel> newEmployeeNavigationService)
+        public static EmployeeListViewModel LoadViewModel(IEmployeeService employeeservice, 
+            NavigationService<NewEmployeeViewModel> newEmployeeNavigationService)
         {
             EmployeeListViewModel viewModel = new(employeeservice, newEmployeeNavigationService);
             return viewModel;
